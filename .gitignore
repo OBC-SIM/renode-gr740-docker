@@ -1,0 +1,59 @@
+# Build artifacts
+*.o
+*.d
+*.exe
+*.elf
+*.map
+*.prom
+*.s
+dump.s
+xdump.s
+
+# Build directories
+b-*/
+**/b-gr740/
+
+# Toolchain archives and tarballs
+*.tar.gz
+*.tar.xz
+*.deb
+
+# Extracted toolchain directories
+sparc-bcc-*/
+renode/
+renode_portable/
+mkprom2/
+
+# RTEMS source
+rtems/
+src/
+
+# Temporary and generated files
+*.tmp
+*.log
+*.swp
+*~
+
+# IDE and editor files
+.vscode/*
+!.vscode/launch.json
+!.vscode/tasks.json
+.idea/
+*.code-workspace
+
+# Dev container environment specifics
+config.ini
+
+# Renode package files
+renode*.deb
+renode*.tar.gz
+renode*.zip
+
+# Compiled libraries
+*.a
+*.so
+*.dylib
+*.dll
+
+# mkprom2 archives
+mkprom2*.tar.gz

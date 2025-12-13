@@ -1,0 +1,112 @@
+sysbus:
+    Endianess: Endianess.BigEndian
+
+rom: Memory.MappedMemory @ {
+        sysbus 0xC0000000;
+        ftmctrl
+    }
+    size: 0x10000000
+
+sdram: Memory.MappedMemory @ sysbus 0x00000000
+    size: 0x80000000
+
+sram: Memory.MappedMemory @ sysbus 0xD0000000
+    size: 0x10000000
+
+cpu: CPU.Sparc @ sysbus
+    cpuType: "leon3"
+
+ftmctrl: MemoryControllers.Gaisler_FaultTolerantMemoryController @ sysbus 0xFF903000
+
+mic: IRQControllers.GaislerMIC @ sysbus <0xFF904000, +0x4000>
+    0 -> cpu@0 | cpu@1 | cpu@2
+
+uart0: UART.GaislerAPBUART @ sysbus <0xFF900000, +0x100>
+    -> mic@29
+
+uart1: UART.GaislerAPBUART @ sysbus <0xFF901000, +0x100>
+    -> mic@30
+
+gptimer0: Timers.Gaisler_GPTimer @ sysbus <0xFF908000, +0x100>
+    [0-4] -> mic@[1-5]
+    numberOfTimers: 5
+    frequency: 20000000
+
+gptimer1: Timers.Gaisler_GPTimer @ sysbus <0xFF909000, +0x100>
+    0 -> mic@6
+    numberOfTimers: 4
+    frequency: 20000000
+
+gptimer2: Timers.Gaisler_GPTimer @ sysbus <0xFF90A000, +0x100>
+    0 -> mic@7
+    numberOfTimers: 4
+    frequency: 20000000
+
+gptimer3: Timers.Gaisler_GPTimer @ sysbus <0xFF90B000, +0x100>
+    0 -> mic@8
+    numberOfTimers: 4
+    frequency: 20000000
+
+gptimer4: Timers.Gaisler_GPTimer @ sysbus <0xFF90C000, +0x100>
+    0 -> mic@9
+    numberOfTimers: 4
+    frequency: 20000000
+
+gpio0: GPIOPort.Gaisler_GPIO @ sysbus 0xFF902000
+    [0-3] -> mic@[16-19]
+    numberOfConnections: 16
+    numberOfInterrupts: 15
+    inputOnlyPins: ""
+
+gpio1: GPIOPort.Gaisler_GPIO @ sysbus 0xFFA08000
+    [0-3] -> mic@[16-19]
+    numberOfConnections: 22
+    numberOfInterrupts: 15
+    inputOnlyPins: ""
+
+greth0: Network.GaislerEth @ sysbus 0xFF940000
+    -> mic@24
+
+greth1: Network.GaislerEth @ sysbus 0xFF980000
+    -> mic@25
+
+phy: Network.EthernetPhysicalLayer @ greth0 0
+    BasicStatus: 0x2d // LinkStatus | AutoNegotiationAbility | AutoNegotiationComplete | ExtendedCapabilities
+    Id1: 0x0141
+    Id2: 0x0e40
+    AutoNegotiationAdvertisement: 0x1e1
+    AutoNegotiationLinkPartnerBasePageAbility: 0x1e1
+    MasterSlaveControl: 0x300
+    MasterSlaveStatus: 0x3000
+
+ahbInfo: Bus.GaislerAHBPlugAndPlayInfo @ sysbus <0xFFFFF000, +0x1000>
+
+apb0Controller: Bus.GaislerAPBController @ sysbus <0xFF9FF000, +0x1000>
+
+apb1Controller: Bus.GaislerAPBController @ sysbus <0xFFAFF000, +0x1000>
+
+sysbus:
+    init:
+        Tag <0xFFE00000 0x100> "MMCTRL"
+        Tag <0xFFE01000 0x100> "MEMSCRUB"
+        Tag <0xF0000000 0x400000> "L2CACHE"
+        Tag <0xFF800000 0x40000> "GRPCI2"
+        Tag <0xFF840000 0x8000> "GRIOMMU"
+        Tag <0xFF880000 0x2000> "GRSPWROUTER port"
+        Tag <0xFF90D000 0x1000> "GRSPWROUTER inf0"
+        Tag <0xFF90E000 0x1000> "GRSPWROUTER inf1"
+        Tag <0xFF90F000 0x1000> "GRSPWROUTER inf2"
+        Tag <0xFF910000 0x1000> "GRSPWROUTER inf3"
+        Tag <0xFFA00000 0x100> "GRPCI2 registers"
+        Tag <0xFFA01000 0x400> "GRCAN0"
+        Tag <0xFFA02000 0x400> "GRCAN1"
+        Tag <0xFFA03000 0x100> "SPICTRL"
+        Tag <0xFFA04000 0x100> "GRCLKGATE"
+        Tag <0xFFA05000 0x100> "GR1553B"
+        Tag <0xFFA06000 0x100> "AHBSTAT0"
+        Tag <0xFFA07000 0x100> "AHBSTAT1"
+        Tag <0xFFA09000 0x100> "GRGPREG"
+        Tag <0xFFA0A000 0x100> "GR740THSENS"
+        Tag <0xFFA0B000 0x100> "GRGPRBANK"
+        Tag <0xFFA0C000 0x200> "GRSPWTDP"
+

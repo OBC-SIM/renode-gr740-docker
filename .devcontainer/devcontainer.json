@@ -1,0 +1,58 @@
+{
+  "name": "Renode Development",
+  "dockerFile": "../Dockerfile",
+  "workspaceFolder": "/opt",
+  "containerEnv": {
+    "DISPLAY": "192.168.0.159:0.0"
+  },
+  "mounts": [
+    "source=${localWorkspaceFolder},target=/opt,type=bind"
+  ],
+  "runArgs": [
+    "--net=host"
+  ],
+  "privileged": true,
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "jeff-hykin.better-c-syntax",
+        "albert.TabOut",
+        "ybaumes.highlight-trailing-white-spaces",
+        "ms-python.vscode-pylance",
+        "ms-python.debugpy",
+        "twxs.cmake",
+        "redhat.vscode-yaml",
+        "Anthropic.claude-code",
+        "rioj7.command-variable",
+        "msfukui.eof-mark",
+        "redhat.vscode-yaml",
+        "coolchyni.beyond-debug",
+        "oderwat.indent-rainbow",
+        "ms-python.python",
+        "ms-dotnettools.csharp",
+        "ms-vscode.cpptools",
+        "ms-dotnettools.csdevkit",
+        "ms-azuretools.vscode-containers",
+        "MS-CEINTL.vscode-language-pack-ko"
+
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "python.languageServer": "Pylance",
+        "files.associations": {
+          "*.h": "c",
+          "*.c": "c",
+          "*.cpp": "cpp",
+          "*.cc": "cpp",
+          "*.hpp": "cpp"
+        }
+      }
+    }
+  },
+  "remoteUser": "root",
+  "postCreateCommand": "chmod +x /opt/setup-renode.sh && /opt/setup-renode.sh",
+  "forwardPorts": [
+    6144,
+    10
+  ]
+}

@@ -1,0 +1,18 @@
+$name?="gr740"
+$bin?=@/opt/samples/hello-world/b-gr740/app.prom
+$repl?=@/opt/gr740.repl
+
+using sysbus
+mach create $name
+
+machine LoadPlatformDescription $repl
+showAnalyzer uart0
+
+macro reset
+"""
+    sysbus LoadELF $bin
+    machine StartGdbServer 3333
+
+"""
+
+runMacro $reset
