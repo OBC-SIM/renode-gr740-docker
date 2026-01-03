@@ -170,4 +170,4 @@ mkprom2 -gr740 -baud 38400 -freq 20 b-gr740/app.exe -o b-gr740/app.prom
 
 ## License
 
-해당 프로젝트의 라이선스를 여기에 명시하세요.
+본 프로젝트는 Apache License 2.0에 따라 라이선스가 부여됩니다.
