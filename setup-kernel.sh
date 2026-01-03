@@ -22,8 +22,8 @@ fi
 export PATH=/opt/rtems/6/bin:$PATH
 echo 'export PATH=/opt/rtems/6/bin:$PATH' >> ~/.bashrc
 
-if [ ! -d '/opt/src/rtems-6.1' ]; then
-  # rm -rf /opt/src/rtems-6.1 2> /dev/null
+if [ ! -d '/opt/src/rtems' ]; then
+  # rm -rf /opt/src/rtems 2> /dev/null
   echo "Downloading RTEMS kernel source 6 ..."
   cd /opt/src
   git clone https://gitlab.rtems.org/rtems/rtos/rtems.git
