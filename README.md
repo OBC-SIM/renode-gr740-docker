@@ -164,9 +164,9 @@ mkprom2 -gr740 -baud 38400 -freq 20 b-gr740/app.exe -o b-gr740/app.prom
 ## References
 
 - [Renode Documentation](https://renode.readthedocs.io/)
-- [GR740 Quad Core LEON4 Processor](https://www.gaisler.com/index.php/products/processors/gr740)
+- [GR740 Quad Core LEON4 Processor](https://www.gaisler.com/products/gr740)
 - [RTEMS Documentation](https://docs.rtems.org/)
-- mkprom2 Documentation: `mkprom2/doc/mkprom2.pdf`
+- [MKPROM2 Online Source](https://www.gaisler.com/products/mkprom2#downloads)
 
 ## License
 
