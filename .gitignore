@@ -41,9 +41,6 @@ src/
 .idea/
 *.code-workspace
 
-# Dev container environment specifics
-config.ini
-
 # Renode package files
 renode*.deb
 renode*.tar.gz
