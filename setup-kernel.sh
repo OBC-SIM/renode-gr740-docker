@@ -1,42 +1,94 @@
 #!/bin/bash
+set -euo pipefail
 
-apt-get update
+RTEMS_VER=6.1
+PREFIX=/opt/rtems/6
+SRC=/opt/src
+LOG=$SRC/rtems-gr740-build.log
 
-if [ ! -d '/opt/src/rsb' ]; then
-  # rm -rf /opt/src/rtems-source-builder-6.1 2> /dev/null
-  rm -rf /opt/src/rsb 2> /dev/null
-  echo "Downloading RTEMS source builder 6.1 ..."
-  mkdir -p /opt/src
-  cd /opt/src
+mkdir -p $SRC
+exec > >(tee -i $LOG) 2>&1
+
+echo "=========================================="
+echo " RTEMS $RTEMS_VER GR740 BSP Build Pipeline"
+echo "=========================================="
+
+# --------------------------------------------------
+# 1. RTEMS Source Builder
+# --------------------------------------------------
+echo "[1/6] RTEMS Source Builder"
+
+cd $SRC
+if [ ! -d rsb ]; then
   git clone https://gitlab.rtems.org/rtems/tools/rtems-source-builder.git rsb
-  cd rsb
-  git checkout 6.1
-  echo "Build and install the tool suite..."
-  cd rtems/
-  ../source-builder/sb-set-builder --prefix=/opt/rtems/6 6/rtems-sparc
-  echo "RTEMS source builder installed successfully!"
-else
-  echo "Source builder already exists!"
 fi
 
-export PATH=/opt/rtems/6/bin:$PATH
-echo 'export PATH=/opt/rtems/6/bin:$PATH' >> ~/.bashrc
+cd rsb
+git fetch
+git checkout 6.1
 
-if [ ! -d '/opt/src/rtems' ]; then
-  # rm -rf /opt/src/rtems 2> /dev/null
-  echo "Downloading RTEMS kernel source 6 ..."
-  cd /opt/src
+# --------------------------------------------------
+# 2. Build SPARC toolchain
+# --------------------------------------------------
+echo "[2/6] Build SPARC cross toolchain"
+
+cd rtems
+../source-builder/sb-set-builder --prefix=$PREFIX 6/rtems-sparc
+
+export PATH=$PREFIX/bin:$PATH
+if ! grep -q "$PREFIX/bin" ~/.bashrc; then
+  echo "export PATH=$PREFIX/bin:\$PATH" >> ~/.bashrc
+fi
+
+# --------------------------------------------------
+# 3. RTEMS kernel source
+# --------------------------------------------------
+echo "[3/6] RTEMS kernel source"
+
+cd $SRC
+if [ ! -d rtems ]; then
   git clone https://gitlab.rtems.org/rtems/rtos/rtems.git
-  cd rtems
-  git checkout 6.1
-  echo "Build the BSP..."
-  cp /opt/config.ini /opt/src/rtems
-  # ./waf configure --prefix=/opt/rtems/6 --enable-rtemsbsp=sparc/leon3
-  ./waf configure --rtems-bsps=sparc/gr740 --rtems-tools=/opt/rtems/6 --prefix=/opt/rtems/6 --rtems-config=config.ini
-  ./waf && ./waf install
-  echo "RTEMS BSP built and installed successfully!"
-else
-  echo "RTEMS Kernel source already exists!"
 fi
 
-echo "Container is ready for RTEMS development!"
+cd rtems
+git fetch
+git checkout 6.1
+
+# --------------------------------------------------
+# 4. BSP configuration
+# --------------------------------------------------
+echo "[4/6] BSP configuration"
+
+if [ ! -f /opt/config.ini ]; then
+  echo "FATAL: /opt/config.ini not found"
+  exit 1
+fi
+
+cp /opt/config.ini .
+
+# --------------------------------------------------
+# 5. Configure GR740 BSP
+# --------------------------------------------------
+echo "[5/6] Configure BSP: sparc/gr740"
+
+./waf configure \
+  --rtems-bsps=sparc/gr740 \
+  --rtems-tools=$PREFIX \
+  --prefix=$PREFIX \
+  --rtems-config=config.ini
+
+# --------------------------------------------------
+# 6. Build + install
+# --------------------------------------------------
+echo "[6/6] Build & install BSP"
+
+./waf -j$(nproc)
+./waf install
+
+echo ""
+echo "=========================================="
+echo " RTEMS $RTEMS_VER GR740 READY"
+echo "=========================================="
+echo " Toolchain : $PREFIX/bin"
+echo " BSP       : $PREFIX/sparc-rtems6/gr740"
+echo " Log       : $LOG"
