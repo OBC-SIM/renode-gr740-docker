@@ -6,6 +6,10 @@ Renode 시뮬레이터와 GR740 SPARC 프로세서를 위한 VSCode 통합 디�
 
 이 환경을 사용하기 전에 다음 사항들이 준비되어야 합니다:
 
+### 0. System Requirements
+
+원활한 Dev Container 빌드 및 실행을 위해 호스트 PC에 **최소 10GB 이상의 디스크 여유 공간**이 필요합니다.
+
 ### 1. Required Tools
 
 - **Docker**: Dev Container 실행을 위해 필요
