@@ -57,6 +57,7 @@ RUN apt-get update && apt-get upgrade -yq && apt-get install -y \
     x11-apps \
     python3 \
     python3-pip \
+    python-is-python3 \
     && rm -rf /var/lib/apt/lists/*
 
 # 작업 디렉토리 설정
