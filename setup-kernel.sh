@@ -11,6 +11,8 @@ exec > >(tee -i $LOG) 2>&1
 
 echo "=========================================="
 echo " RTEMS $RTEMS_VER GR740 BSP Build Pipeline"
+START=$(date +%Y)-$(date +%m)-$(date +%d) $(date +%H):$(date +%M):$(date +%S)
+echo " Start Time : $START"
 echo "=========================================="
 
 # --------------------------------------------------
@@ -85,6 +87,13 @@ echo "[6/6] Build & install BSP"
 ./waf -j$(nproc)
 ./waf install
 
+END=$(date +%Y)-$(date +%m)-$(date +%d) $(date +%H):$(date +%M):$(date +%S)
+START_SECS=$(date -d "$START" +%s)
+END_SECS=$(date -d "$END" +%s)
+ELAPSED_SECS=$((END_SECS - START_SECS))
+ELAPSED_TIME=$(date -u -d "@$diff_sec" "+%H:%M:%S")
+
+
 echo ""
 echo "=========================================="
 echo " RTEMS $RTEMS_VER GR740 READY"
@@ -92,3 +101,7 @@ echo "=========================================="
 echo " Toolchain : $PREFIX/bin"
 echo " BSP       : $PREFIX/sparc-rtems6/gr740"
 echo " Log       : $LOG"
+echo " Start Time: $START"
+echo " End   Time: $END"
+echo " Elapsed   : $ELAPSED_TIME (HH:MM:SS)"
+echo "=========================================="
