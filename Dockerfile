@@ -33,12 +33,6 @@ RUN apt-get update && apt-get upgrade -yq && apt-get install -y \
     cmake \
     bison \
     flex \
-    texlive \
-    texlive-latex-extra \
-    texlive-fonts-extra \
-    pdftk \
-    doxygen \
-    texinfo \
     bzip2 \
     xz-utils \
     unzip \
