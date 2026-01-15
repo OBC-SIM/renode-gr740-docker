@@ -1,176 +1,141 @@
 # Renode + GR740 VSCode Debugging Environment
 
 Renode 시뮬레이터와 GR740 SPARC 프로세서를 위한 VSCode 통합 디버깅 환경입니다.
+**RTEMS 6 툴체인과 Renode 시뮬레이터가 포함된 사전 빌드된 Docker 이미지**를 사용하여, 복잡한 설치 과정 없이 즉시 개발을 시작할 수 있습니다.
 
 ## Prerequisites
 
-이 환경을 사용하기 전에 다음 사항들이 준비되어야 합니다:
+이 환경을 사용하기 위해 다음 도구들이 필요합니다:
 
-### 0. System Requirements
+### 1. Host Tools
 
-원활한 Dev Container 빌드 및 실행을 위해 호스트 PC에 **최소 10GB 이상의 디스크 여유 공간**이 필요합니다.
+* **Docker Desktop**: Dev Container 실행을 위해 필요
+* **VSCode**: Visual Studio Code
+* **VSCode Extensions**:
+* Dev Containers (Microsoft)
+* C/C++ (Microsoft)
 
-### 1. Required Tools
 
-- **Docker**: Dev Container 실행을 위해 필요
-- **VSCode**: Visual Studio Code
-- **VSCode Extensions**:
-  - Dev Containers (Microsoft)
-  - C/C++ (Microsoft)
-  - Command Variable (rioj7)
 
-### 2. PROM Image
+### 2. X Server (Windows Only)
 
-**중요**: 이 환경은 `mkprom`으로 생성된 PROM 이미지가 필요합니다.
+Renode의 GUI 창을 띄우기 위해 Windows 사용자는 **VcXsrv (XLaunch)**가 필요합니다.
 
-사용자 애플리케이션을 포함한 PROM 이미지를 미리 준비해야 합니다:
+1. [VcXsrv Windows X Server](https://sourceforge.net/projects/vcxsrv/) 다운로드 및 설치
+2. **XLaunch 실행 및 설정 (중요)**:
+* **Display settings**: `Multiple windows` 선택 (Display number는 -1)
+* **Client startup**: `Start no client` 선택
+* **Extra settings**: **`Disable access control` 체크 필수** (이걸 체크 안 하면 Docker에서 접속이 차단됨)
+* **Finish**: 설정 저장 후 실행
 
-1. RTEMS 애플리케이션 빌드 (`.exe` 또는 `.elf` 파일)
-2. `mkprom` 또는 `mkprom2` 도구를 사용하여 PROM 이미지 생성
-3. 생성된 `.prom` 파일을 프로젝트 디렉터리에 배치
 
-예시:
-```bash
-cd samples/hello-world
-make
-# b-gr740/app.exe 생성됨
+3. 방화벽 경고가 뜨면 `Public/Private` 네트워크 모두 **허용**
 
-# mkprom을 사용하여 PROM 이미지 생성
-mkprom2 -gr740 -baud 38400 -freq 20 b-gr740/app.exe -o b-gr740/app.prom
-```
+## Dev Container Setup
 
-### 3. Toolchain
+이 프로젝트는 두 가지 방식의 개발 환경 구성을 지원합니다.
 
-다음 도구들이 필요합니다 (Docker 이미지에 포함되어야 함):
+### Option A: Pre-built Image (기본값, 권장)
 
-- SPARC RTEMS6 GCC toolchain
-- `sparc-rtems6-gdb`
-- Renode simulator
+* **설정 파일**: `.devcontainer/devcontainer.json`
+* **특징**: `mcleroysane19/rtems-gr740-env:latest` 이미지를 다운로드하여 즉시 사용합니다.
+* **사용법**: VSCode에서 `Ctrl + Shift + P` > `Dev Containers: Reopen in Container` 선택 시 기본으로 이 설정이 사용됩니다.
 
-## Project Structure
+### Option B: Build from Dockerfile (사용자 정의)
 
-```
+* **설정 파일**: `.devcontainer/devcontainer_build.json`
+* **특징**: 로컬 `Dockerfile`을 기반으로 이미지를 새로 빌드합니다. 추가 패키지 설치 등 환경 커스터마이징이 필요할 때 사용합니다.
+* **사용법**:
+1. `.devcontainer/devcontainer.json`의 이름을 변경하거나 삭제합니다.
+2. `devcontainer_build.json`의 이름을 `devcontainer.json`으로 변경합니다.
+3. VSCode에서 `Dev Containers: Reopen in Container`를 실행하면 Dockerfile 기반으로 빌드가 진행됩니다.
+
+
+
+## Project Core Structure
+
+```text
 .
-├── .devcontainer/          # Dev Container 설정
-│   └── devcontainer.json
-├── .vscode/                # VSCode 디버깅 설정
-│   ├── launch.json         # 디버그 실행 설정
-│   └── tasks.json          # Renode 실행 태스크
-├── samples/                # 샘플 애플리케이션
-│   └── hello-world/        # Hello World 예제
-│       ├── hello.c
-│       ├── init.c
+├── .devcontainer/
+│   ├── devcontainer.json        # (기본) Pre-built 이미지 사용 설정
+│   └── devcontainer_build.json  # (옵션) Dockerfile 빌드 모드 설정
+├── .vscode/                     # VSCode 디버깅 설정
+│   ├── launch.json
+│   └── tasks.json
+├── samples/                     # 샘플 애플리케이션
+│   └── hello-world/        
 │       ├── Makefile
-│       └── b-gr740/        # 빌드 출력 (gitignore됨)
-│           └── app.prom    # PROM 이미지 (필수!)
-├── gr740.repl              # GR740 플랫폼 정의
-├── main.resc               # Renode 시작 스크립트
-├── Dockerfile              # 개발 환경 Docker 이미지
-└── setup-renode.sh         # Renode 설정 스크립트
+│       └── b-gr740/             # 빌드 결과물 (app.prom 등)
+├── gr740.repl                   # 하드웨어 정의
+├── main.resc                    # Renode 스크립트
+├── Dockerfile                   # 사용자 정의용 템플릿 (옵션 B에서 사용)
+└── config.ini
+
 ```
+
+> **Note**: 프로젝트 마운트 경로는 **`/workspace`**입니다. 소스 코드 경로는 반드시 `/workspace`로 시작해야 합니다.
 
 ## Getting Started
 
-### 1. Dev Container 시작
+### 1. 환경 실행
 
-1. VSCode에서 프로젝트 폴더 열기
-2. Command Palette (`Ctrl+Shift+P` 또는 `Cmd+Shift+P`)에서 "Dev Containers: Reopen in Container" 실행
-3. 컨테이너가 빌드되고 시작됨
+VSCode에서 프로젝트를 열고 좌측 하단의 `><` 아이콘을 클릭하거나 `Ctrl + Shift + P`을 눌러 **"Reopen in Container"**를 실행합니다.
 
-### 2. 샘플 애플리케이션 빌드
+### 2. 샘플 빌드 & 디버깅
 
+1. **빌드**: 터미널에서 샘플 폴더로 이동하여 빌드합니다.
 ```bash
 cd samples/hello-world
 make
 ```
 
-빌드 후 `b-gr740/` 디렉터리에 다음 파일들이 생성됩니다:
-- `app.exe`: 실행 파일
-- `app.prom`: PROM 이미지 (mkprom으로 생성 필요)
-
-### 3. 디버깅 시작
-
-1. VSCode에서 디버그 뷰 열기 (`Ctrl+Shift+D` 또는 `Cmd+Shift+D`)
-2. "Debug application in Renode" 설정 선택
-3. `F5` 키를 눌러 디버깅 시작
-4. 디버그할 `.exe` 또는 `.elf` 파일 선택
-5. Renode가 자동으로 시작되고 GDB 서버가 포트 3333에서 실행됨
+2. **GUI 준비**: 호스트 PC에서 **XLaunch**가 실행 중인지 확인합니다.
+3. **디버깅**: `F5` 키를 눌러 **"Debug application in Renode"**를 실행하고, 생성된 `app.exe` 파일을 선택합니다.
 
 ## Configuration Files
 
-### gr740.repl
+### main.resc (경로 주의)
 
-GR740 프로세서의 하드웨어 플랫폼 정의:
-- Memory mapping (ROM, SDRAM, SRAM)
-- Peripherals (UART, Timer, GPIO, Ethernet 등)
-- Interrupt controller
-- Big-endian SPARC/Leon3 CPU
+스크립트 내 경로는 컨테이너 내부 경로인 `/workspace`를 사용해야 합니다.
 
-### main.resc
+```bash
+$name?="gr740"
+$bin?=@/workspace/samples/hello-world/b-gr740/app.prom
+$repl?=@/workspace/gr740.repl
+...
 
-Renode 시작 스크립트:
-- 플랫폼 로드
-- PROM 이미지 로드
-- UART 분석기 표시
-- GDB 서버 시작 (포트 3333)
-
-기본 설정:
 ```
-$bin = @/opt/samples/hello-world/b-gr740/app.prom
-```
-
-다른 PROM 이미지를 사용하려면 이 경로를 수정하세요.
-
-## Debugging Workflow
-
-1. **Pre-Launch**: VSCode가 자동으로 "Run Renode" 태스크 실행
-2. **Renode 시작**: `main.resc` 스크립트로 시뮬레이터 시작
-3. **GDB 연결**: GDB가 localhost:3333으로 연결
-4. **디버깅**: VSCode에서 중단점 설정, 변수 검사, 단계별 실행 등
-5. **Post-Debug**: 디버깅 종료 시 Renode 자동 종료
 
 ## Troubleshooting
 
-### PROM 이미지 오류
+### Renode GUI 오류
 
-```
-Error: Could not load file: .../app.prom
-```
+`Error: Can't open display: host.docker.internal:0.0` 오류 발생 시:
 
-**해결 방법**: `mkprom` 또는 `mkprom2`로 PROM 이미지를 생성했는지 확인하세요.
+1. XLaunch가 실행 중인지 확인하세요.
+2. XLaunch 설정 시 `Disable access control`을 체크했는지 확인하세요.
 
 ### GDB 연결 실패
 
-```
-Unable to connect to localhost:3333
-```
+`Unable to connect to localhost:3333` 오류 발생 시:
 
-**해결 방법**:
-1. Renode 태스크가 정상적으로 실행되었는지 확인
-2. Terminal에서 "GDB server with all CPUs started on port" 메시지 확인
-3. 포트 3333이 다른 프로세스에 의해 사용되고 있지 않은지 확인
+1. 터미널 탭에서 Renode 실행 로그를 확인하세요.
+2. 포트 3333이 다른 프로세스에 점유되어 있는지 확인하세요.
 
-### mkprom 사용법
+## Changelog
 
-```bash
-# 기본 사용법
-mkprom2 -gr740 -baud 38400 -freq 20 <input.exe> -o <output.prom>
+### [2026-01-15] - Environment Optimization
 
-# 예시
-mkprom2 -gr740 -baud 38400 -freq 20 b-gr740/app.exe -o b-gr740/app.prom
-```
+**Added**
 
-주요 옵션:
-- `-gr740`: GR740 타겟 지정
-- `-baud 38400`: UART 보드레이트
-- `-freq 20`: 클럭 주파수 (MHz)
+* **Pre-built Image Support**: Docker Hub에 이미지로 배포하는 방식을 사용하여 초기 설정 시간을 단축했습니다.
+* **XLaunch Guide**: Windows GUI 지원 가이드 추가.
 
-## References
+**Changed**
 
-- [Renode Documentation](https://renode.readthedocs.io/)
-- [GR740 Quad Core LEON4 Processor](https://www.gaisler.com/products/gr740)
-- [RTEMS Documentation](https://docs.rtems.org/)
-- [MKPROM2 Online Source](https://www.gaisler.com/products/mkprom2#downloads)
+* **Dual DevContainer Config**: `devcontainer.json`(이미지 모드)과 `devcontainer_build.json`(빌드 모드)으로 설정 분리.
+* **Dockerfile**: 사용자 커스터마이징을 위한 경량 템플릿 구조로 변경.
+* **Mount Path**: 툴체인 보호를 위해 워크스페이스 경로를 `/opt` → `/workspace`로 변경.
 
 ## License
 

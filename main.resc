@@ -1,6 +1,6 @@
 $name?="gr740"
-$bin?=@/opt/samples/hello-world/b-gr740/app.prom
-$repl?=@/opt/gr740.repl
+$bin?=@/workspace/samples/hello-world/b-gr740/app.prom
+$repl?=@/workspace/gr740.repl
 
 using sysbus
 mach create $name

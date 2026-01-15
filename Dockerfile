@@ -1,60 +1,13 @@
-FROM ubuntu:22.04
+# Pre-built RTEMS + Renode 환경 이미지를 기반으로 시작
+FROM mcleroysane19/rtems-gr740-env:latest
 
-ENV DEBIAN_FRONTEND=noninteractive \
-    TZ=UTC
+# --------------------------------------------------------------------------
+# [Optional] 추가 패키지 설치나 사용자 설정을 이곳에 작성하세요.
+# 예: RUN apt-get update && apt-get install -y my-favorite-tool
+# --------------------------------------------------------------------------
 
-# 로케일 설정
-RUN apt-get update && \
-    apt-get upgrade -yq && \
-    apt-get install -y locales && \
-    locale-gen en_US.UTF-8 && \
-    rm -rf /var/lib/apt/lists/*
+# 작업 디렉토리 설정 (기본값 유지)
+WORKDIR /workspace
 
-ENV LANG=en_US.UTF-8 \
-    LANGUAGE=en_US:en \
-    LC_ALL=en_US.UTF-8
-
-# 기본 패키지 설치
-RUN apt-get update && apt-get upgrade -yq && apt-get install -y \
-    apt-utils \
-    bear \
-    automake \
-    build-essential \
-    clang-tools \
-    cppcheck \
-    coreutils \
-    pv \
-    vim \
-    lsof \
-    net-tools \
-    git \
-    g++ \
-    git-lfs \
-    cmake \
-    bison \
-    flex \
-    bzip2 \
-    xz-utils \
-    unzip \
-    wget \
-    curl \
-    tar \
-    pax \
-    sudo \
-    policykit-1 \
-    ninja-build \
-    pkg-config \
-    libgtk-3-dev \
-    uml-utilities \
-    mono-complete \
-    gtk-sharp3 \
-    x11-apps \
-    python3 \
-    python3-pip \
-    python-is-python3 \
-    && rm -rf /var/lib/apt/lists/*
-
-# 작업 디렉토리 설정
-WORKDIR /opt
-
+# 컨테이너 시작 시 실행할 명령
 CMD ["/bin/bash"]

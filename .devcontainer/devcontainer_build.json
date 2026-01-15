@@ -1,0 +1,59 @@
+{
+  "name": "Renode Development (Build from Source)",
+  "build": {
+    "dockerfile": "../Dockerfile",
+    "context": ".."
+  },
+  "workspaceFolder": "/workspace",
+  "containerEnv": {
+    "DISPLAY": "host.docker.internal:0.0",
+    "RTEMS_ROOT": "/opt/rtems/6"
+  },
+  "mounts": [
+    "source=${localWorkspaceFolder},target=/workspace,type=bind"
+  ],
+  "runArgs": [
+    "--net=host",
+    "--privileged"
+  ],
+  "privileged": true,
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "albert.TabOut",
+        "ybaumes.highlight-trailing-white-spaces",
+        "ms-python.vscode-pylance",
+        "ms-python.debugpy",
+        "twxs.cmake",
+        "redhat.vscode-yaml",
+        "rioj7.command-variable",
+        "msfukui.eof-mark",
+        "redhat.vscode-yaml",
+        "coolchyni.beyond-debug",
+        "oderwat.indent-rainbow",
+        "ms-python.python",
+        "ms-dotnettools.csharp",
+        "ms-vscode.cpptools",
+        "ms-dotnettools.csdevkit",
+        "ms-azuretools.vscode-containers",
+        "MS-CEINTL.vscode-language-pack-ko"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "python.languageServer": "Pylance",
+        "files.associations": {
+          "*.h": "c",
+          "*.c": "c",
+          "*.cpp": "cpp",
+          "*.cc": "cpp",
+          "*.hpp": "cpp"
+        }
+      }
+    }
+  },
+  "remoteUser": "root",
+  "forwardPorts": [
+    6144,
+    10
+  ]
+}

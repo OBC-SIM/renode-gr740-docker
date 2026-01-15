@@ -1,28 +1,28 @@
 {
-  "name": "Renode Development",
-  "dockerFile": "../Dockerfile",
-  "workspaceFolder": "/opt",
+  "name": "Renode Development (Pre-built Image)",
+  "image": "mcleroysane19/rtems-gr740-env:latest",
+  "workspaceFolder": "/workspace",
   "containerEnv": {
-    "DISPLAY": "192.168.0.159:0.0"
+    "DISPLAY": "host.docker.internal:0.0",
+    "RTEMS_ROOT": "/opt/rtems/6"
   },
   "mounts": [
-    "source=${localWorkspaceFolder},target=/opt,type=bind"
+    "source=${localWorkspaceFolder},target=/workspace,type=bind"
   ],
   "runArgs": [
-    "--net=host"
+    "--net=host",
+    "--privileged"
   ],
   "privileged": true,
   "customizations": {
     "vscode": {
       "extensions": [
-        "jeff-hykin.better-c-syntax",
         "albert.TabOut",
         "ybaumes.highlight-trailing-white-spaces",
         "ms-python.vscode-pylance",
         "ms-python.debugpy",
         "twxs.cmake",
         "redhat.vscode-yaml",
-        "Anthropic.claude-code",
         "rioj7.command-variable",
         "msfukui.eof-mark",
         "redhat.vscode-yaml",
@@ -34,7 +34,6 @@
         "ms-dotnettools.csdevkit",
         "ms-azuretools.vscode-containers",
         "MS-CEINTL.vscode-language-pack-ko"
-
       ],
       "settings": {
         "terminal.integrated.defaultProfile.linux": "bash",
@@ -50,7 +49,6 @@
     }
   },
   "remoteUser": "root",
-  "postCreateCommand": "chmod +x /opt/setup-renode.sh && /opt/setup-renode.sh",
   "forwardPorts": [
     6144,
     10
