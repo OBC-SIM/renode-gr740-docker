@@ -7,6 +7,10 @@ Renode 시뮬레이터와 GR740 SPARC 프로세서를 위한 VSCode 통합 디�
 
 이 환경을 사용하기 위해 다음 도구들이 필요합니다:
 
+### 0. System Requirements
+
+원활한 Dev Container 빌드 및 실행을 위해 호스트 PC에 **최소 20GB 이상의 디스크 여유 공간**이 필요합니다.
+
 ### 1. Host Tools
 
 * **Docker Desktop**: Dev Container 실행을 위해 필요
@@ -14,7 +18,6 @@ Renode 시뮬레이터와 GR740 SPARC 프로세서를 위한 VSCode 통합 디�
 * **VSCode Extensions**:
 * Dev Containers (Microsoft)
 * C/C++ (Microsoft)
-
 
 
 ### 2. X Server (Windows Only)
@@ -63,7 +66,7 @@ Renode의 GUI 창을 띄우기 위해 Windows 사용자는 **VcXsrv (XLaunch)**�
 │   ├── launch.json
 │   └── tasks.json
 ├── samples/                     # 샘플 애플리케이션
-│   └── hello-world/        
+│   └── hello-world/
 │       ├── Makefile
 │       └── b-gr740/             # 빌드 결과물 (app.prom 등)
 ├── gr740.repl                   # 하드웨어 정의
@@ -73,7 +76,7 @@ Renode의 GUI 창을 띄우기 위해 Windows 사용자는 **VcXsrv (XLaunch)**�
 
 ```
 
-> **Note**: 프로젝트 마운트 경로는 **`/workspace`**입니다. 소스 코드 경로는 반드시 `/workspace`로 시작해야 합니다.
+> **Note**: 프로젝트 마운트 경로는 `/workspace`입니다. 소스 코드 경로는 반드시 `/workspace`로 시작해야 합니다.
 
 ## Getting Started
 
@@ -103,7 +106,6 @@ $name?="gr740"
 $bin?=@/workspace/samples/hello-world/b-gr740/app.prom
 $repl?=@/workspace/gr740.repl
 ...
-
 ```
 
 ## Troubleshooting
