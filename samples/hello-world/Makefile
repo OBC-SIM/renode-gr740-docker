@@ -11,7 +11,7 @@ WARNFLAGS = -Wall -Wextra
 OPTFLAGS = -O2 -g -ffunction-sections -fdata-sections
 EXEEXT = .exe
 
-SUPPORT_INCLUDE = -I/opt/samples/utils/include
+SUPPORT_INCLUDE = -I/workspace/samples/utils/include
 
 ABI_FLAGS = $(shell pkg-config --cflags $(PKG_CONFIG))
 LDFLAGS = $(shell pkg-config --libs $(PKG_CONFIG)) -lrtemsbsp -lrtemstest -lrtemscpu -lm
