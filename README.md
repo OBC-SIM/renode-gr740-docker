@@ -34,6 +34,38 @@ Renode의 GUI 창을 띄우기 위해 Windows 사용자는 **VcXsrv (XLaunch)**�
 
 3. 방화벽 경고가 뜨면 `Public/Private` 네트워크 모두 **허용**
 
+### 3. PROM Image Setup
+**중요**: 이 환경은 `mkprom`으로 생성된 PROM 이미지가 필요합니다.
+
+사용자 애플리케이션을 포함한 PROM 이미지를 미리 준비해야 합니다:
+
+1. RTEMS 애플리케이션 빌드 (`.exe` 또는 `.elf` 파일)
+2. `mkprom` 또는 `mkprom2` 도구를 사용하여 PROM 이미지 생성
+3. 생성된 `.prom` 파일을 프로젝트 디렉터리에 배치
+
+#### mkprom 사용법
+
+```bash
+# GR740 용
+mkprom2 –v –stack 0x0FFFFF00 –ramsize 262144 -sparcleon0 –memcfg1 0x0803c0ff –memcfg3 0x08000000 –dump –v –rstaddr 0xc0000000 -uart 0xFF900000 –freq 250 –baud 38400 -bdinit <input.exe> –o <output.prom>
+```
+
+```bash
+# GR712rc 용
+mkprom2 -leon3 -freq 80 -rmw -ramsize 8192 -romsize 8192 -baud 38400 -ramws 2 <input.exe> -o <output.prom>
+```
+
+#### 사용 예시
+```bash
+cd samples/hello-world
+make
+# b-gr740/app.exe 생성됨
+
+# mkprom을 사용하여 GR740 환경 PROM 이미지 생성 예시
+mkprom2 –v –stack 0x0FFFFF00 –ramsize 262144 -sparcleon0 –memcfg1 0x0803c0ff –memcfg3 0x08000000 –dump –v –rstaddr 0xc0000000 -uart 0xFF900000 –freq 250 –baud 38400 -bdinit b-gr740/app.exe –o b-gr740/app.prom
+```
+
+
 ## Dev Container Setup
 
 이 프로젝트는 두 가지 방식의 개발 환경 구성을 지원합니다.
@@ -73,7 +105,6 @@ Renode의 GUI 창을 띄우기 위해 Windows 사용자는 **VcXsrv (XLaunch)**�
 ├── main.resc                    # Renode 스크립트
 ├── Dockerfile                   # 사용자 정의용 템플릿 (옵션 B에서 사용)
 └── config.ini
-
 ```
 
 > **Note**: 프로젝트 마운트 경로는 `/workspace`입니다. 소스 코드 경로는 반드시 `/workspace`로 시작해야 합니다.
@@ -124,7 +155,32 @@ $repl?=@/workspace/gr740.repl
 1. 터미널 탭에서 Renode 실행 로그를 확인하세요.
 2. 포트 3333이 다른 프로세스에 점유되어 있는지 확인하세요.
 
+### MKPROM 관련 오류
+> sparc-gaisler-elf/bin/ld: cannot find bdinit.o: No such file or directory 관련 오류
+
+[추가 MKPROM2 Package](https://download.gaisler.com/products/gr-cpci-gr740/bin/gr-cpci-gr740-bp.zip) 파일을 다운로드 하여 압축 해제 후 파일 내부의 `bdinit` 폴더를 `mkprom2` 하위에 배치
+
+#### 최종 mkprom 디렉터리 구조
+```text
+.
+├── mkprom2/
+│   └── bdinit/
+│       ├── bdinit.c
+│       ├── bdinit_gr740_grcg.ci
+│       ├── bdinit_gr740_l2cache.ci
+│       ├── ...
+│       └── Makefile.bdinit
+└── ...
+```
+
+
 ## Changelog
+
+### [2026-01-16] - MKPROM Guide
+
+**Added**
+* **PROM Guide**: PROM 이미지 생성 가이드 추가
+
 
 ### [2026-01-15] - Environment Optimization
 
