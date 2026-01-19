@@ -22,7 +22,7 @@ Renode 시뮬레이터와 GR740 SPARC 프로세서를 위한 VSCode 통합 디�
 
 ### 2. X Server (Windows Only)
 
-Renode의 GUI 창을 띄우기 위해 Windows 사용자는 **VcXsrv (XLaunch)**가 필요합니다.
+Renode의 GUI 창을 띄우기 위해 Windows 사용자는 **VcXsrv XLaunch**가 필요합니다.
 
 1. [VcXsrv Windows X Server](https://sourceforge.net/projects/vcxsrv/) 다운로드 및 설치
 2. **XLaunch 실행 및 설정 (중요)**:
@@ -47,12 +47,12 @@ Renode의 GUI 창을 띄우기 위해 Windows 사용자는 **VcXsrv (XLaunch)**�
 
 ```bash
 # GR740 용
-mkprom2 –v –stack 0x0FFFFF00 –ramsize 262144 -sparcleon0 –memcfg1 0x0803c0ff –memcfg3 0x08000000 –dump –v –rstaddr 0xc0000000 -uart 0xFF900000 –freq 250 –baud 38400 -bdinit <input.exe> –o <output.prom>
+./mkprom2 –v –stack 0x0FFFFF00 –ramsize 262144 -sparcleon0 –memcfg1 0x0803c0ff –memcfg3 0x08000000 –dump –v –rstaddr 0xc0000000 -uart 0xFF900000 –freq 250 –baud 38400 -bdinit <input.exe> –o <output.prom>
 ```
 
 ```bash
 # GR712rc 용
-mkprom2 -leon3 -freq 80 -rmw -ramsize 8192 -romsize 8192 -baud 38400 -ramws 2 <input.exe> -o <output.prom>
+./mkprom2 -leon3 -freq 80 -rmw -ramsize 8192 -romsize 8192 -baud 38400 -ramws 2 <input.exe> -o <output.prom>
 ```
 
 #### 사용 예시
@@ -61,8 +61,11 @@ cd samples/hello-world
 make
 # b-gr740/app.exe 생성됨
 
+# mkprom 설치 디렉터리로 이동
+cd /workspace/mkprom2
+
 # mkprom을 사용하여 GR740 환경 PROM 이미지 생성 예시
-mkprom2 –v –stack 0x0FFFFF00 –ramsize 262144 -sparcleon0 –memcfg1 0x0803c0ff –memcfg3 0x08000000 –dump –v –rstaddr 0xc0000000 -uart 0xFF900000 –freq 250 –baud 38400 -bdinit b-gr740/app.exe –o b-gr740/app.prom
+./mkprom2 –v –stack 0x0FFFFF00 –ramsize 262144 -sparcleon0 –memcfg1 0x0803c0ff –memcfg3 0x08000000 –dump –v –rstaddr 0xc0000000 -uart 0xFF900000 –freq 250 –baud 38400 -bdinit /workspace/samples/hello-world/b-gr740/app.exe –o /workspace/samples/hello-world/b-gr740/app.prom
 ```
 
 
@@ -113,7 +116,7 @@ mkprom2 –v –stack 0x0FFFFF00 –ramsize 262144 -sparcleon0 –memcfg1 0x0803
 
 ### 1. 환경 실행
 
-VSCode에서 프로젝트를 열고 좌측 하단의 `><` 아이콘을 클릭하거나 `Ctrl + Shift + P`을 눌러 **"Reopen in Container"**를 실행합니다.
+VSCode에서 프로젝트를 열고 좌측 하단의 `><` 아이콘을 클릭하거나 `Ctrl + Shift + P`을 눌러 **Reopen in Container**를 실행합니다.
 
 ### 2. 샘플 빌드 & 디버깅
 
